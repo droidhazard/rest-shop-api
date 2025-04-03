@@ -11,19 +11,30 @@ app.use(morgan("tiny"));
 const PORT = process.env.PORT || 5000;
 const API_URL = process.env.API_URL;
 
-app.get(`${API_URL}/products`, (req, res) => {
-  const product = {
-    id: 1,
-    name: "hair dresser",
-    image: "some_url",
-  };
-  res.send(product);
+const productSchema = new mongoose.Schema({
+  name: String,
+  image: String,
+  countInStock: Number,
 });
 
-app.post(`${API_URL}/products`, (req, res) => {
-  const newProduct = req.body;
-  console.log(newProduct);
-  res.send(newProduct);
+const Product = mongoose.model("Product", productSchema);
+
+app.get(`${API_URL}/products`, async (req, res) => {
+  const productsList = await Product.find();
+  if (!productsList) {
+    res.status(500).json({ success: false });
+  }
+  res.send(productsList);
+});
+
+app.post(`${API_URL}/products`, async (req, res) => {
+  const product = new Product({
+    name: req.body.name,
+    image: req.body.image,
+    countInStock: req.body.countInStock,
+  });
+  await product.save();
+  res.status(201).json(product);
 });
 
 mongoose
