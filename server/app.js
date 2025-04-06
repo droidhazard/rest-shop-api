@@ -16,9 +16,11 @@ app.use(morgan("tiny"));
 // Routes
 const productsRoutes = require("./routers/products");
 const categoriesRoutes = require("./routers/categories");
+const usersRoutes = require("./routers/users");
 
 app.use(`${API_URL}/products`, productsRoutes);
 app.use(`${API_URL}/categories`, categoriesRoutes);
+app.use(`${API_URL}/users`, usersRoutes);
 
 // app.get(`${API_URL}/products`, getProducts);
 
