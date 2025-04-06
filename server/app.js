@@ -3,18 +3,22 @@ const app = express();
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
-const productsRouter = require("./routers/products");
 // import { getProducts, createProduct } from "./routers/products.js";
 
 require("dotenv").config();
-
-app.use(bodyParser.json());
-app.use(morgan("tiny"));
-
 const PORT = process.env.PORT || 5000;
 const API_URL = process.env.API_URL;
 
-app.use(`${API_URL}/products`, productsRouter);
+// Middle ware
+app.use(bodyParser.json());
+app.use(morgan("tiny"));
+
+// Routes
+const productsRoutes = require("./routers/products");
+const categoriesRoutes = require("./routers/categories");
+
+app.use(`${API_URL}/products`, productsRoutes);
+app.use(`${API_URL}/categories`, categoriesRoutes);
 
 // app.get(`${API_URL}/products`, getProducts);
 
