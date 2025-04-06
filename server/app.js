@@ -3,13 +3,15 @@ const app = express();
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
+const cors = require("cors");
 // import { getProducts, createProduct } from "./routers/products.js";
 
 require("dotenv").config();
 const PORT = process.env.PORT || 5000;
 const API_URL = process.env.API_URL;
 
-// Middle ware
+// Middleware
+app.use(cors({ origin: "*" }));
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
 
