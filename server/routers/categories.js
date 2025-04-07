@@ -25,4 +25,15 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.delete("/:id", (req, res) => {
+  const categoryId = req.params.id;
+  Category.findByIdAndDelete(categoryId)
+    .then((deletedCategory) => {
+      res.send(deletedCategory);
+    })
+    .catch((error) => {
+      res.status(400).json({ success: false });
+    });
+});
+
 module.exports = router;
