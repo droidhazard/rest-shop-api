@@ -9,7 +9,7 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  rickDescription: {
+  richDescription: {
     type: String,
     default: `<p>This is where it all begin<p>`,
   },
@@ -28,7 +28,8 @@ const productSchema = new mongoose.Schema({
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Schema",
+    ref: "Category",
+    required: true,
   },
   countInStock: {
     type: Number,
