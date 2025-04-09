@@ -93,4 +93,22 @@ router.delete("/:id", (req, res) => {
     });
 });
 
+router.get("/get/count", async (req, res) => {
+  const productCount = await Product.countDocuments();
+  res.send({ count: productCount });
+  console.log(productCount);
+});
+
+router.get("/get/featured/:limit", async (req, res) => {
+  const limit = req.params.limit || 3;
+  const featuredProducts = await Product.find({ isFeatured: true }).limit(
+    +limit
+  );
+  if (featuredProducts) {
+    res.send(featuredProducts);
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
+
 module.exports = router;
