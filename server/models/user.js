@@ -38,11 +38,6 @@ const userSchema = new mongoose.Schema({
     default: "",
   },
   country: { type: String, default: "" },
-  image: String,
-  countInStock: {
-    type: Number,
-    required: true,
-  },
 });
 
 userSchema.virtual("id").get(function () {
