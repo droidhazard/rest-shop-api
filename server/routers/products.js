@@ -3,12 +3,13 @@ const Product = require("../models/product.js");
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const authJwt = require("../helpers/jwt.js");
 
 // const getProducts = router.get("/");
 
 // const createProduct = router.post("/");
 
-router.get(`/`, async (req, res) => {
+router.get(`/`, authJwt(), async (req, res) => {
   // const productsList = await Product.find().select("name image -_id");
   let filter = {};
   if (req.query.categories) {

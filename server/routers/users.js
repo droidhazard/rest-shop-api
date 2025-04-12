@@ -5,9 +5,10 @@ const bcrypt = require("bcryptjs");
 require("dotenv").config();
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const authJwt = require("../helpers/jwt");
 
 // * GET ALL USERS
-router.get("/", async (req, res) => {
+router.get("/", authJwt(), async (req, res) => {
   const userList = await User.find().select("-passwordHash");
   if (!userList) {
     res.status(500).json({ success: false });
@@ -63,7 +64,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// * LOGGIN USER IN
+// * LOGGING USER IN
 router.post("/login", async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
   if (user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
