@@ -1,7 +1,11 @@
 const Category = require("../models/category");
 const express = require("express");
 const router = express.Router();
+<<<<<<< HEAD
 const authJwt = require("../helpers/jwt");
+=======
+const authJwt = require("./helpers/jwt");
+>>>>>>> e8e4081019ced39f29b9fc921190bb668fa06fc8
 
 router.get("/", async (req, res) => {
   const categoryList = await Category.find();
