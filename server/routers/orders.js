@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", authJwt(), async (req, res) => {
   const newOrder = req.body;
   const createdOrder = await Order.create(newOrder);
   res.status(201).json(createdOrder);

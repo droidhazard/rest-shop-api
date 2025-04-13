@@ -22,7 +22,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", authJwt(), async (req, res) => {
   let newCategory = new Category({
     name: req.body.name,
     icon: req.body.icon,
@@ -36,7 +36,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", authJwt(), async (req, res) => {
   const updatedCategory = await Category.findByIdAndUpdate(
     req.params.id,
     {
@@ -54,7 +54,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", authJwt(), (req, res) => {
   const categoryId = req.params.id;
   Category.findByIdAndDelete(categoryId)
     .then((deletedCategory) => {

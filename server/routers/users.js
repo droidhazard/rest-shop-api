@@ -33,7 +33,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // * GET USERS WITH LIMITED DETAILS
-router.get("/get/dashboard", async (req, res) => {
+router.get("/get/dashboard", authJwt(), async (req, res) => {
   const usersList = await User.find().select("name email phone isAdmin");
   if (usersList) {
     res.send(usersList);
@@ -43,7 +43,7 @@ router.get("/get/dashboard", async (req, res) => {
 });
 
 // * CREATE A USER
-router.post("/register", async (req, res) => {
+router.post("/register", authJwt(), async (req, res) => {
   let newUser = new User({
     name: req.body.name || "",
     email: req.body.email || "",

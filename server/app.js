@@ -30,7 +30,7 @@ app.use(`${API_URL}/orders`, ordersRoutes);
 app.use(cors({ origin: "*" }));
 app.use(morgan("tiny"));
 app.use(errorHandler);
-app.use(authJwt);
+// app.use(authJwt);
 
 // app.get(`${API_URL}/products`, getProducts);
 

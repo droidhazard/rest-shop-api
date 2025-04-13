@@ -58,7 +58,7 @@ router.post(`/`, authJwt(), async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", authJwt(), async (req, res) => {
   const isValidId = mongoose.isValidObjectId(req.params.id);
   if (isValidId) {
     const updatedProduct = await Product.findByIdAndUpdate(
@@ -89,7 +89,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", authJwt(), (req, res) => {
   const productId = req.params.id;
   Product.findByIdAndDelete(productId)
     .then((deletedProduct) => {
