@@ -9,6 +9,7 @@ const authJwt = require("../helpers/jwt.js");
 
 // const createProduct = router.post("/");
 
+// * GET ALL PRODUCTS
 router.get(`/`, authJwt(), async (req, res) => {
   // const productsList = await Product.find().select("name image -_id");
   let filter = {};
@@ -30,7 +31,8 @@ router.get(`/:id`, async (req, res) => {
   res.send(product);
 });
 
-router.post(`/`, async (req, res) => {
+// * CREATE A PRODUCT
+router.post(`/`, authJwt(), async (req, res) => {
   const category = await Category.findById(req.body.category);
   if (!category) {
     res.status(400).json({ message: "invalid category" });

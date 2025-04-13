@@ -43,7 +43,7 @@ router.get("/get/dashboard", async (req, res) => {
 });
 
 // * CREATE A USER
-router.post("/", async (req, res) => {
+router.post("/register", async (req, res) => {
   let newUser = new User({
     name: req.body.name || "",
     email: req.body.email || "",
@@ -65,7 +65,8 @@ router.post("/", async (req, res) => {
 });
 
 // * LOGGING USER IN
-router.post("/login", async (req, res) => {
+router.post("/login", authJwt(), async (req, res) => {
+  console.log(req.body);
   const user = await User.findOne({ email: req.body.email });
   if (user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
     const token = jwt.sign(

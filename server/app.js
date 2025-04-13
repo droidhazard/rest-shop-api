@@ -8,6 +8,9 @@ const authJwt = require("./helpers/jwt");
 const errorHandler = require("./helpers/error-handler");
 // import { getProducts, createProduct } from "./routers/products.js";
 
+// Middlewares 1
+app.use(bodyParser.json());
+
 require("dotenv").config();
 const PORT = process.env.PORT || 5000;
 const API_URL = process.env.API_URL;
@@ -23,9 +26,8 @@ app.use(`${API_URL}/categories`, categoriesRoutes);
 app.use(`${API_URL}/users`, usersRoutes);
 app.use(`${API_URL}/orders`, ordersRoutes);
 
-// Middleware
+// Middlewares 2
 app.use(cors({ origin: "*" }));
-app.use(bodyParser.json());
 app.use(morgan("tiny"));
 app.use(errorHandler);
 app.use(authJwt);
