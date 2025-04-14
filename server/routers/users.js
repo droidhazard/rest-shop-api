@@ -108,12 +108,13 @@ router.delete("/:id", authJwt(), async (req, res) => {
   }
 });
 
-async function isRevoked(req, payload, done) {
+async function isRevoked(req, jwt) {
   console.log("is admin: ", payload.isAdmin);
+  const payload = jwt.payload;
   if (!payload.isAdmin) {
-    done(null, true);
+    return true;
   } else {
-    done();
+    return false;
   }
 }
 
