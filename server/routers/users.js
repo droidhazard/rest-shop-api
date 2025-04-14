@@ -72,6 +72,8 @@ router.post("/login", authJwt(), async (req, res) => {
     const token = jwt.sign(
       {
         userId: user.id,
+        isAdmin: user.isAdmin,
+        isRevoked: isRevoked,
       },
       process.env.JWT_SIGNING_SECRET,
       { expiresIn: "1d" }
@@ -83,4 +85,14 @@ router.post("/login", authJwt(), async (req, res) => {
       .send({ message: "invalid email/password", success: false });
   }
 });
+
+async function isRevoked(req, payload, done) {
+  console.log("is admin: ", payload.isAdmin);
+  if (!payload.isAdmin) {
+    done(null, true);
+  } else {
+    done();
+  }
+}
+
 module.exports = router;
