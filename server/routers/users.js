@@ -86,6 +86,28 @@ router.post("/login", authJwt(), async (req, res) => {
   }
 });
 
+// * GETTING USERS COUNT
+router.get("/get/count/", authJwt(), async (req, res) => {
+  const usersCount = await User.countDocuments();
+  if (usersCount) {
+    res.send({ count: usersCount });
+  } else {
+    res.status(400).json({ success: false });
+  }
+});
+
+// * DELETE A USER
+router.delete("/:id", authJwt(), async (req, res) => {
+  const userToDelete = req.params.id;
+  const isValidId = mongoose.isValidObjectId(userToDelete);
+  if (isValidId) {
+    const deletedUser = await User.findByIdAndDelete(userToDelete);
+    res.send(deletedUser);
+  } else {
+    res.status(400).json({ success: false, message: "invalid user id" });
+  }
+});
+
 async function isRevoked(req, payload, done) {
   console.log("is admin: ", payload.isAdmin);
   if (!payload.isAdmin) {
