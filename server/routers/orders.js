@@ -6,7 +6,7 @@ const authJwt = require("../helpers/jwt");
 
 // * GET ALL ORDERS
 router.get("/", async (req, res) => {
-  const orderList = await Order.find();
+  const orderList = await Order.find().populate("user", "name");
   if (!orderList) {
     res.status(500).json({ success: false });
   } else {
@@ -16,8 +16,21 @@ router.get("/", async (req, res) => {
 
 // * GET ORDER BY ID
 router.get("/:id", async (req, res) => {
-  const order = await Order.findById(req.params.id).populate("lineItems user");
-  console.log(order);
+  const order = await Order.findById(req.params.id)
+    .populate([
+      { path: "user" },
+      {
+        path: "lineItems",
+        populate: {
+          path: "product",
+          populate: {
+            path: "category",
+          },
+        },
+      },
+    ])
+    .sort({ dateOrdered: -1 });
+  // console.log(order);
   if (order) {
     res.send(order);
   } else {
@@ -55,6 +68,23 @@ router.post("/", authJwt(), async (req, res) => {
 
   order = await order.save();
   res.status(201).json(order);
+});
+
+// * UPDATE ORDER STATUS
+router.put("/:id", authJwt(), async (req, res) => {
+  const orderId = req.params.id;
+  const updatedProduct = await Order.findByIdAndUpdate(
+    orderId,
+    {
+      status: req.body.status,
+    },
+    { new: true }
+  );
+  if (updatedProduct) {
+    res.send(updatedProduct);
+  } else {
+    res.status(500).json({ success: false });
+  }
 });
 
 module.exports = router;
