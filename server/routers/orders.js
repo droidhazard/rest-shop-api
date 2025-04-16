@@ -40,6 +40,7 @@ router.get("/:id", async (req, res) => {
 
 // * CREATE AN ORDER
 router.post("/", authJwt(), async (req, res) => {
+  // * Creating multiple Line Items with post data
   const lineItemIds = Promise.all(
     req.body.lineItems.map(async (item) => {
       let newLineItem = new LineItem({
@@ -51,6 +52,20 @@ router.post("/", authJwt(), async (req, res) => {
     })
   );
   const lineItemIdsResolved = await lineItemIds;
+
+  // * Calculate total price of order
+  const totalPrices = await Promise.all(
+    lineItemIdsResolved.map(async (lineItemId) => {
+      const lineItem = await LineItem.findById(lineItemId).populate(
+        "product",
+        "price"
+      );
+      const totalPrice = lineItem.product.price * lineItem.quantity;
+      return totalPrice;
+    })
+  );
+  const totalPrice = totalPrices.reduce((a, b) => a + b, 0);
+
   // console.log(lineItemIdsResolved);
   let order = new Order({
     lineItems: lineItemIdsResolved,
@@ -61,7 +76,7 @@ router.post("/", authJwt(), async (req, res) => {
     country: req.body.country,
     phone: req.body.phone,
     status: req.body.status,
-    totalPrice: req.body.totalPrice,
+    totalPrice: totalPrice,
     user: req.body.user,
     dateOrdered: req.body.dateOrdered,
   });
@@ -82,6 +97,24 @@ router.put("/:id", authJwt(), async (req, res) => {
   );
   if (updatedProduct) {
     res.send(updatedProduct);
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
+
+// * DELETE ORDER BY ID
+router.delete("/:id", authJwt(), async (req, res) => {
+  const orderId = req.params.id;
+  let orderData = await Order.findById(orderId);
+  orderLineItems = orderData.lineItems.map(async (item) => {
+    await LineItem.findByIdAndDelete(item).catch((error) => {
+      console.log("Error while deleting lineitem: ", error);
+    });
+  });
+  console.log(orderData);
+  // const deletedOrder = await Order.findByIdAndDelete(orderId);
+  if (deletedOrder) {
+    res.send(deletedOrder);
   } else {
     res.status(500).json({ success: false });
   }
