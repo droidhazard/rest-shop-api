@@ -120,4 +120,42 @@ router.delete("/:id", authJwt(), async (req, res) => {
   }
 });
 
+// * GET TOTAL SALES
+router.get("/get/totalsales", async (req, res) => {
+  const totalSales = await Order.aggregate([
+    { $group: { _id: null, totalSales: { $sum: "$totalPrice" } } },
+  ]);
+  if (totalSales) {
+    res.send({ totalSales: totalSales.pop().totalSales });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
+
+// * GET ORDERS COUNT
+router.get("/get/count", async (req, res) => {
+  const count = await Order.countDocuments();
+  if (count) {
+    res.send({ count: count });
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
+
+// * GET ORDERS OF SPECIFIC USER
+router.get("/get/userorders/:userid", async (req, res) => {
+  const ordersList = await Order.find({ user: req.params.userid }).populate({
+    path: "lineItems",
+    populate: {
+      path: "product",
+      populate: "category",
+    },
+  });
+  if (ordersList) {
+    res.send(ordersList);
+  } else {
+    res.status(500).json({ success: false });
+  }
+});
+
 module.exports = router;
