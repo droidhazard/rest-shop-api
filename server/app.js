@@ -30,6 +30,7 @@ app.use(`${API_URL}/orders`, ordersRoutes);
 app.use(cors({ origin: "*" }));
 app.use(morgan("tiny"));
 app.use(errorHandler);
+app.use("/public/uploads", express.static(__dirname + "/public/uploads"));
 // app.use(authJwt);
 
 // app.get(`${API_URL}/products`, getProducts);

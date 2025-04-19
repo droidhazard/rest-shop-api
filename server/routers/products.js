@@ -60,6 +60,11 @@ router.get(`/:id`, async (req, res) => {
 // * CREATE A PRODUCT
 router.post(`/`, authJwt(), uploadOptions.single("image"), async (req, res) => {
   // * Uploaded file naming
+  const file = req.file;
+  if (!file)
+    return res
+      .status(400)
+      .json({ success: false, message: "file upload missing" });
   const fileName = req.file.filename;
   const basePath = `${req.protocol}://${req.get("host")}/public/uploads/`;
 
@@ -151,5 +156,46 @@ router.get("/get/featured/:limit", async (req, res) => {
     res.status(500).json({ success: false });
   }
 });
+
+// * UPLOAD MULTIPLE PRODUCT IMAGES
+router.put(
+  "/product-gallery/:id",
+  authJwt(),
+  uploadOptions.array("images", 10),
+  async (req, res) => {
+    const isValid = mongoose.isValidObjectId(req.params.id);
+    if (isValid) {
+      let files = req.files;
+      let imagesPaths = [];
+      const basePath = `${req.protocol}://${req.get("host")}/public/uploads/`;
+
+      if (files) {
+        files = files.map((file) => {
+          console.log(file);
+          imagesPaths.push(`${basePath}${file.filename}`);
+        });
+      }
+
+      const product = await Product.findByIdAndUpdate(
+        req.params.id,
+        {
+          images: imagesPaths,
+        },
+        {
+          new: true,
+        }
+      );
+      if (product) {
+        res.send(product);
+      } else {
+        res
+          .status(500)
+          .send({ message: "failed to add images", success: false });
+      }
+    } else {
+      res.status(400).json({ message: "invalid object id" });
+    }
+  }
+);
 
 module.exports = router;
